@@ -12,9 +12,10 @@ def monogram_counter_aggregator(pathname):
             word, count = line.strip().split(',')
             words_count += Counter({word: int(count)})
 
-    with open('datasets/monogram_frequencies.txt', 'w') as f:
-        for word, count in words_count.most_common():
-            f.write('{},{}\n'.format(word, count))
+    # TODO filename in parameter
+    # with open('datasets/monogram_frequencies.txt', 'w') as f:
+    #     for word, count in words_count.most_common():
+    #         f.write('{},{}\n'.format(word, count))
 
 
 if __name__ == "__main__":

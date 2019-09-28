@@ -1,3 +1,5 @@
 datasets/corpus.txt filter=lfs diff=lfs merge=lfs -text
 datasets/preprocessed_corpus.txt filter=lfs diff=lfs merge=lfs -text
 datasets/monogram_frequencies.txt filter=lfs diff=lfs merge=lfs -text
+datasets/bigram_frequencies.txt filter=lfs diff=lfs merge=lfs -text
+datasets/trigram_frequencies.txt filter=lfs diff=lfs merge=lfs -text
