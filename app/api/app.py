@@ -3,8 +3,6 @@ from flask import Flask, request, abort, jsonify
 
 app = Flask(__name__)
 
-# monogram_frequencies_df[monogram_frequencies_df.ngram.str.startswith('t', na=False)]
-# monogram_frequencies_df[monogram_frequencies_df.ngram.str.startswith('t', na=False)].ngram.values[:10]
 words = pd.read_csv('vocab.csv', names=['word'])
 monograms = pd.read_csv('monograms.csv')
 bigrams = pd.read_csv('bigrams.csv')
@@ -20,8 +18,13 @@ def predict():
             if nb_words == 0:
                 result = words[words.word.str.startswith(value, na=False)].word.values[:10].tolist()
                 return jsonify(result)
-
-            return 'Hello World!'
+            elif nb_words == 1:
+                return jsonify([])
+            elif nb_words == 2:
+                return jsonify([])
+            else:
+                # just take the two last words
+                return jsonify([])
         else:
             return 'should provide a words number and a value', 400
     else:
