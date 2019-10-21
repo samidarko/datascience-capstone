@@ -3,30 +3,38 @@ from flask import Flask, request, abort, jsonify
 
 app = Flask(__name__)
 
-words = pd.read_csv('vocab.csv', names=['word'])
+vocab = pd.read_csv('vocab.csv', names=['word'])
 monograms = pd.read_csv('monograms.csv')
 bigrams = pd.read_csv('bigrams.csv')
+
+
+def predict_words(df, words, chars, limit=10):
+    ngram = ' '.join(words)
+    if chars:
+        index = (df.ngram == ngram) & (df.prediction.str.startswith(chars, na=False))
+        return df[index].prediction.values[:limit].tolist()
+    else:
+        return df[df.ngram == ngram].prediction.values[:limit].tolist()
 
 
 @app.route('/', methods=['POST'])
 def predict():
     if request.is_json:
         data = request.get_json()
-        if 'nb_words' in data and 'value' in data:
-            nb_words = data['nb_words']
-            value = data['value']
-            if nb_words == 0:
-                result = words[words.word.str.startswith(value, na=False)].word.values[:10].tolist()
-                return jsonify(result)
-            elif nb_words == 1:
-                return jsonify([])
-            elif nb_words == 2:
-                return jsonify([])
-            else:
-                # just take the two last words
-                return jsonify([])
+        words = data.get('words', [])
+        n = len(words)
+        chars = data.get('chars', '')
+        if n == 0:
+            result = vocab[vocab.word.str.startswith(chars, na=False)].word.values[:10].tolist()
+            return jsonify(result)
+        elif n == 1:
+            return jsonify(predict_words(monograms, words, chars))
+        elif n == 2:
+            return jsonify(predict_words(bigrams, words, chars))
         else:
-            return 'should provide a words number and a value', 400
+            # TODO trigram
+            words = words[-2:]
+            return jsonify(predict_words(bigrams, words, chars))
     else:
         return 'not a json request', 400
 
