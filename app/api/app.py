@@ -23,18 +23,21 @@ def predict():
         data = request.get_json()
         words = data.get('words', [])
         n = len(words)
-        chars = data.get('chars', '')
-        if n == 0:
-            result = vocab[vocab.word.str.startswith(chars, na=False)].word.values[:10].tolist()
+
+        if n == 1 and words[0] == '':
+            result = vocab.word.values[:10].tolist()
             return jsonify(result)
-        elif n == 1:
-            return jsonify(predict_words(monograms, words, chars))
+        elif n == 1 and words[0]:
+            result = vocab[vocab.word.str.startswith(words[0], na=False)].word.values[:10].tolist()
+            return jsonify(result)
         elif n == 2:
-            return jsonify(predict_words(bigrams, words, chars))
+            return jsonify(predict_words(monograms, words[:1], words[1]))
+        elif n == 3:
+            return jsonify(predict_words(bigrams, words[:2], words[2]))
         else:
             # TODO trigram
-            words = words[-2:]
-            return jsonify(predict_words(bigrams, words, chars))
+            words = words[-3:]
+            return jsonify(predict_words(bigrams, words[:2], words[2]))
     else:
         return 'not a json request', 400
 
