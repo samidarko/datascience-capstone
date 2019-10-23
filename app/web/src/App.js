@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import {DebounceInput} from 'react-debounce-input';
-import {init, last, tail} from 'ramda'
+// import {init, last, tail} from 'ramda'
 import axios from 'axios'
 
 class App extends React.Component {
@@ -12,9 +12,7 @@ class App extends React.Component {
 
     onChange = event => {
         const values = event.target.value.split(' ');
-        // const data = values.length > 1 ? {words: init(values), chars: last(values)} : {chars: last(values)};
         const data = {words: values};
-        console.log(data)
         axios.post('http://127.0.0.1:5000/ ', data)
             .then(response => {
                 this.setState({predictions: response.data})
@@ -23,6 +21,12 @@ class App extends React.Component {
                 console.error(error);
             });
     };
+
+    onClick = event => {
+        const value = `${this.state.value} ${event.target.value}`;
+        this.setState({value, predictions: []});
+        this.onChange({target: {value}});
+    }
 
     render() {
         return (
@@ -38,9 +42,12 @@ class App extends React.Component {
                         debounceTimeout={500}
                         onChange={this.onChange}/>
 
-                    <ul>
-                        {this.state.predictions.map(prediction => <li key={prediction}>{prediction}</li>)}
-                    </ul>
+                    <p>
+                        {
+                            this.state.predictions.map(
+                                (prediction, i) => <button value={prediction} onClick={this.onClick} key={i}>{prediction}</button>)
+                        }
+                    </p>
                 </header>
             </div>
         );
