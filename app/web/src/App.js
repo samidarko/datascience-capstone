@@ -11,7 +11,11 @@ class App extends React.Component {
     };
 
     onChange = event => {
-        const values = event.target.value.split(' ');
+        this.predict(event.target.value)
+    };
+
+    predict = value => {
+        const values = value.split(' ');
         const data = {words: values};
         axios.post('http://127.0.0.1:5000/ ', data)
             .then(response => {
@@ -23,10 +27,10 @@ class App extends React.Component {
     };
 
     onClick = event => {
-        const value = `${this.state.value} ${event.target.value}`;
+        const value = `${this.state.value ? `${this.state.value} ` : ''}${event.target.value}`;
         this.setState({value, predictions: []});
-        this.onChange({target: {value}});
-    }
+        this.predict(value + ' ')
+    };
 
     render() {
         return (
