@@ -17,7 +17,7 @@ def predict_words(df, words, chars, limit=10):
         return df[df.ngram == ngram].prediction.values[:limit].tolist()
 
 
-@app.route('/', methods=['POST'])
+@app.route('/api', methods=['POST'])
 def predict():
     if request.is_json:
         data = request.get_json()
